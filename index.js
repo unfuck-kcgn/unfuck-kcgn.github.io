@@ -15,6 +15,8 @@ const parseAndDownload = ((filename, ktsFile, kcgnAssigned) => {
     }).sort((a,b) => b[1]-a[1]);
     const parsedKts = (new DOMParser()).parseFromString(ktsFile, 'text/xml');
     const currentRound = parseInt(parsedKts.querySelector('CurrentRound').textContent);
+    
+    // unfuck assigned seating
     const foundTables = new Set();
     parsedKts.querySelectorAll('Matches > TournMatch').forEach((match) => {
         const round = parseInt(match.querySelector('Round').textContent);
@@ -40,6 +42,23 @@ const parseAndDownload = ((filename, ktsFile, kcgnAssigned) => {
         foundTables.add(ident);
         tableElm.textContent = (''+newTable);
     });
+    
+    // unfuck null rounds
+    parsedKts.querySelectorAll('PenaltyList > PlayerPenalty').forEach((penalty) => {
+        if (isNaN(parseInt(penalty.querySelector('Round').textContent))) {
+            window.alert('There is a penalty with an invalid "round":\n'+
+                            (penalty.querySelector('Infraction').textContent)+
+                            (penalty.querySelector('Notes').textContent));
+            return;
+        }
+        if (isNaN(parseInt(penalty.querySelector('Judge').textContent))) {
+            window.alert('There is a penalty with an invalid "judge":\n'+
+                            (penalty.querySelector('Infraction').textContent)+
+                            (penalty.querySelector('Notes').textContent));
+            return;
+        }
+    });
+    
     const serializedKts = (new XMLSerializer()).serializeToString(parsedKts);
     
     downloadFile(
