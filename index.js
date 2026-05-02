@@ -14,10 +14,12 @@ const parseAndDownload = ((filename, ktsFile, kcgnAssigned) => {
         return [parseInt(t[0]),parseInt(t[1])];
     }).sort((a,b) => b[1]-a[1]);
     const parsedKts = (new DOMParser()).parseFromString(ktsFile, 'text/xml');
+    const currentRound = parseInt(parsedKts.querySelector('CurrentRound').textContent);
     const foundTables = new Set();
     parsedKts.querySelectorAll('Matches > TournMatch').forEach((match) => {
-        const players = [...(match.querySelectorAll('Player'))].map((e) => parseInt(e.textContent));
-        const round = match.querySelector('Round').textContent;
+        const round = parseInt(match.querySelector('Round').textContent);
+        if (round !== currentRound) return;
+
         let tableElm = match.querySelector('Table');
         const oldTable = parseInt(tableElm.textContent);
         let newTable = oldTable;
