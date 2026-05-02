@@ -49,12 +49,14 @@ const parseAndDownload = ((filename, ktsFile, kcgnAssigned) => {
             window.alert('There is a penalty with an invalid "round":\n'+
                             (penalty.querySelector('Infraction').textContent)+
                             (penalty.querySelector('Notes').textContent));
+            penalty.parentElement.removeChild(penalty);
             return;
         }
         if (isNaN(parseInt(penalty.querySelector('Judge').textContent))) {
             window.alert('There is a penalty with an invalid "judge":\n'+
                             (penalty.querySelector('Infraction').textContent)+
                             (penalty.querySelector('Notes').textContent));
+            penalty.parentElement.removeChild(penalty);
             return;
         }
     });
